@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web
+    command: sleep infinity
+    ports:
+      - 8080:8080
+      - 9000:8000
+    expose:
+      - 8080
+    volumes:
+      - ../:/workspace:cached
+    environment:
+      - JPDA_ADDRESS=8000
+      - JPDA_TRANSPORT=dt_socket
+    networks:
+      - hwnw
+
+networks:
+  hwnw:
+    driver: bridge

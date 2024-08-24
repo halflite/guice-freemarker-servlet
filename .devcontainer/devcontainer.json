@@ -1,0 +1,43 @@
+{
+  "name": "guice-freemarker-servlet",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "workspaceFolder": "/workspace",
+  "service": "web",
+  "forwardPorts": [
+    8080,
+    5432,
+    61616
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-ceintl.vscode-language-pack-ja",
+        "vscjava.vscode-java-pack",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "svelte.svelte-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.wordWrapColumn": 200,
+        "editor.wordWrap": "wordWrapColumn",
+        "files.encoding": "utf8",
+        "files.eol": "\n",
+        "files.trimTrailingWhitespace": true,
+        "[xml]": {
+          "editor.wordWrapColumn": 320,
+          "editor.formatOnSave": false
+        },
+        "[java]": {
+          "java.compile.nullAnalysis.mode": "disabled"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "echo 'nameserver 127.0.0.11\nnameserver 1.1.1.1' > /etc/resolv.conf"
+}
