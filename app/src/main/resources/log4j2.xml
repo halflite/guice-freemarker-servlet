@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <Console name="stdout">
+      <PatternLayout pattern="%d\t[%t]\t%C{5}\t%-5level:\t%msg%n%throwable" />
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="INFO" additivity="true">
+      <AppenderRef ref="stdout" />
+    </Root>
+  </Loggers>
+</Configuration>
