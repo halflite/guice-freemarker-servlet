@@ -6,6 +6,7 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 import app.servlet.IndexServlet;
+import app.servlet.JsonServlet;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -17,6 +18,7 @@ public class AppContextListener extends GuiceServletContextListener {
       @Override
       protected void configureServlets() {
         serve("/").with(IndexServlet.class);
+        serve("/json").with(JsonServlet.class);
       }
     });
   }

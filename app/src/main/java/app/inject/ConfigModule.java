@@ -12,6 +12,9 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
@@ -37,8 +40,15 @@ public class ConfigModule extends AbstractModule {
 
     // ServletContextListener の実装をDIする
     bind(AppContextListener.class);
+
+    // Gson をDIする
+    Gson gson = new GsonBuilder().serializeNulls()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .create();
+    bind(Gson.class).toInstance(gson);
   }
 
+  /** Jetty Server インスタンスを作成 */
   @Provides
   @Singleton
   public Server providesServer(@Named("server.port") Integer port,
