@@ -1,12 +1,16 @@
 package app.inject;
 
+import java.util.AbstractMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
@@ -31,21 +35,42 @@ public class ConfigModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    // MicroProfileConfigをDIする
+    // MicroProfileConfigを取得
+    final Config config = ConfigProvider.getConfig();
+    bind(Config.class).toInstance(config);
+    // MicroProfileConfigの設定値をDIする
     final Map<String, String> props = new HashMap<>();
-    StreamSupport.stream(ConfigProvider.getConfig().getConfigSources().spliterator(), false)
+    StreamSupport.stream(config.getConfigSources().spliterator(), false)
         .map(ConfigSource::getProperties)
         .forEach(props::putAll);
     Names.bindProperties(this.binder(), props);
-
-    // ServletContextListener の実装をDIする
-    bind(AppContextListener.class);
 
     // Gson をDIする
     Gson gson = new GsonBuilder().serializeNulls()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
     bind(Gson.class).toInstance(gson);
+
+    // ServletContextListener の実装をDIする
+    bind(AppContextListener.class);
+  }
+
+  /** FreeMarker設定値を作成する */
+  @Provides
+  @Singleton
+  @Named("freemarker.init.parameters")
+  public Map<String, String> prividesFreeMarker(Config config) {
+    Map<String, String> params = StreamSupport.stream(config.getConfigSources().spliterator(), false)
+        .map(ConfigSource::getProperties)
+        .map(Map::entrySet)
+        .flatMap(Set::stream)
+        .filter(e -> e.getKey().startsWith("freemarker."))
+        .map(e -> new AbstractMap.SimpleImmutableEntry<String, String>(
+            e.getKey().replaceFirst("^freemarker\\.", ""),
+            e.getValue()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1));
+    LOG.debug("freemarker init params: {}", params);
+    return params;
   }
 
   /** Jetty Server インスタンスを作成 */
