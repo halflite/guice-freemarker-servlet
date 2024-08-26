@@ -7,6 +7,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Stage;
 
 import app.inject.ConfigModule;
 
@@ -21,7 +22,7 @@ public class App {
     SLF4JBridgeHandler.install();
 
     // Server
-    Injector injector = Guice.createInjector(new ConfigModule());
+    Injector injector = Guice.createInjector(Stage.PRODUCTION, new ConfigModule());
     Server server = injector.getInstance(Server.class);
 
     try {

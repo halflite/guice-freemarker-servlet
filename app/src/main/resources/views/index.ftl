@@ -18,6 +18,7 @@
           <p class="lead">
             <i class="fa-solid fa-thumbs-up"></i>
             Guice / FreeeMarker / Servlet example.
+            now: ${now?date}
           </p>
         </div>
       </div>

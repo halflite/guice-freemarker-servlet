@@ -25,6 +25,7 @@ public class AppContextListener extends GuiceServletContextListener {
     return Guice.createInjector(new ServletModule() {
       @Override
       protected void configureServlets() {
+        // FreemarkerServlet を SingletonスコープでDI
         bind(FreemarkerServlet.class).in(Singleton.class);
 
         serve("/").with(IndexServlet.class);
