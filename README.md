@@ -1,7 +1,7 @@
 # guice-freemarker-servlet
 Guice / Freemarker / Servlet
 
-minimum standalone web app by Java
+minimum standalone web app example by Java
 
 ## Architecture Base
 
