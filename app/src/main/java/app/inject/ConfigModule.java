@@ -43,7 +43,7 @@ public class ConfigModule extends AbstractModule {
     StreamSupport.stream(config.getConfigSources().spliterator(), false)
         .map(ConfigSource::getProperties)
         .forEach(props::putAll);
-    LOG.info("DI params: {}", props);
+    LOG.debug("DI params: {}", props);
     Names.bindProperties(this.binder(), props);
 
     // Gson をDIする
