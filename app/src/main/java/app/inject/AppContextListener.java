@@ -1,12 +1,17 @@
 package app.inject;
 
+import java.time.ZoneId;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
+import app.helper.DateHelper;
 import app.servlet.IndexServlet;
 import app.servlet.JsonServlet;
 import freemarker.ext.jakarta.servlet.FreemarkerServlet;
@@ -16,15 +21,22 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class AppContextListener extends GuiceServletContextListener {
+  /** logger */
+  private final static Logger LOG = LoggerFactory.getLogger(DateHelper.class);
 
   /** FreeMarker設定パラメーター */
   private final Map<String, String> fmInitParam;
+  /** タイムゾーン定義 */
+  private final ZoneId zoneId;
 
   @Override
   protected Injector getInjector() {
     return Guice.createInjector(new ServletModule() {
       @Override
       protected void configureServlets() {
+        // DateHelperをDI
+        // TODO: より良いDIを考える
+        bind(DateHelper.class).toInstance(new DateHelper(zoneId));
         // FreemarkerServlet を SingletonスコープでDI
         bind(FreemarkerServlet.class).in(Singleton.class);
 
@@ -37,7 +49,10 @@ public class AppContextListener extends GuiceServletContextListener {
   }
 
   @Inject
-  public AppContextListener(@Named("freemarker.init.parameters") Map<String, String> fmInitParam) {
+  public AppContextListener(@Named("freemarker.init.parameters") Map<String, String> fmInitParam,
+      @Named("user.timezone") String zoneId) {
     this.fmInitParam = fmInitParam;
+    LOG.info("zone id: {}", zoneId);
+    this.zoneId = ZoneId.of(zoneId);
   }
 }

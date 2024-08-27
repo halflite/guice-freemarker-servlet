@@ -8,26 +8,21 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-
 /** 日時のヘルパー */
-@Singleton
 public class DateHelper {
   /** logger */
   private final static Logger LOG = LoggerFactory.getLogger(DateHelper.class);
 
   private final ZoneId zoneId;
 
+  /** 現在時刻を返します */
   public Date nowDate() {
     Instant instant = LocalDateTime.now().atZone(this.zoneId).toInstant();
     return Date.from(instant);
   }
 
-  @Inject
-  public DateHelper(@Named("user.timezone") String tz) {
-    LOG.info("{}", tz);
-    this.zoneId = ZoneId.of(tz);
+  public DateHelper(ZoneId zoneId) {
+    LOG.info("zone id: {}", zoneId);
+    this.zoneId = zoneId;
   }
 }

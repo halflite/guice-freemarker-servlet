@@ -43,7 +43,7 @@ public class ConfigModule extends AbstractModule {
     StreamSupport.stream(config.getConfigSources().spliterator(), false)
         .map(ConfigSource::getProperties)
         .forEach(props::putAll);
-    LOG.info("di params: {}", props);
+    LOG.info("DI params: {}", props);
     Names.bindProperties(this.binder(), props);
 
     // Gson をDIする
@@ -79,7 +79,6 @@ public class ConfigModule extends AbstractModule {
   @Singleton
   public Server providesServer(@Named("server.port") Integer port,
       AppContextListener appContextListener) {
-    LOG.info("appContextListener: {}", appContextListener);
     Server server = new Server(port);
 
     ServletContextHandler contextHandler = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
@@ -88,5 +87,4 @@ public class ConfigModule extends AbstractModule {
 
     return server;
   }
-
 }
