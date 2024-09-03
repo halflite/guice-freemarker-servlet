@@ -1,2 +1,5 @@
 # App
 app/target
+
+# VSCode
+.vscode

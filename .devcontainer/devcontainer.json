@@ -16,8 +16,7 @@
         "ms-ceintl.vscode-language-pack-ja",
         "vscjava.vscode-java-pack",
         "redhat.vscode-xml",
-        "redhat.vscode-yaml",
-        "svelte.svelte-vscode"
+        "redhat.vscode-yaml"
       ],
       "settings": {
         "editor.formatOnSave": true,
