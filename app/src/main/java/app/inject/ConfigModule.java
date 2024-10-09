@@ -4,7 +4,6 @@ import java.util.AbstractMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -12,7 +11,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +38,8 @@ public class ConfigModule extends AbstractModule {
     bind(Config.class).toInstance(config);
     // MicroProfileConfigの設定値をDIする
     final Map<String, String> props = new HashMap<>();
-    StreamSupport.stream(config.getConfigSources().spliterator(), false)
-        .map(ConfigSource::getProperties)
-        .forEach(props::putAll);
-    LOG.debug("DI params: {}", props);
+    StreamSupport.stream(config.getPropertyNames().spliterator(), false)
+        .forEach(key -> props.put(key, config.getValue(key, String.class)));
     Names.bindProperties(this.binder(), props);
 
     // Gson をDIする
@@ -61,14 +57,11 @@ public class ConfigModule extends AbstractModule {
   @Singleton
   @Named("freemarker.init.parameters")
   public Map<String, String> prividesFreeMarker(Config config) {
-    Map<String, String> params = StreamSupport.stream(config.getConfigSources().spliterator(), false)
-        .map(ConfigSource::getProperties)
-        .map(Map::entrySet)
-        .flatMap(Set::stream)
-        .filter(e -> e.getKey().startsWith("freemarker."))
-        .map(e -> new AbstractMap.SimpleImmutableEntry<String, String>(
-            e.getKey().replaceFirst("^freemarker\\.", ""),
-            e.getValue()))
+    Map<String, String> params = StreamSupport.stream(config.getPropertyNames().spliterator(), false)
+        .filter(key -> key.startsWith("freemarker."))
+        .map(key -> new AbstractMap.SimpleImmutableEntry<String, String>(
+            key.replaceFirst("^freemarker\\.", ""),
+            config.getValue(key, String.class)))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1));
     LOG.debug("freemarker init params: {}", params);
     return params;

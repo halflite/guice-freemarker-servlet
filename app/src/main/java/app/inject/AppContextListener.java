@@ -50,9 +50,9 @@ public class AppContextListener extends GuiceServletContextListener {
 
   @Inject
   public AppContextListener(@Named("freemarker.init.parameters") Map<String, String> fmInitParam,
-      @Named("user.timezone") String zoneId) {
+      @Named("tz") String tz) {
     this.fmInitParam = fmInitParam;
-    LOG.info("zone id: {}", zoneId);
-    this.zoneId = ZoneId.of(zoneId);
+    LOG.info("timezone: {}", tz);
+    this.zoneId = ZoneId.of(tz);
   }
 }
